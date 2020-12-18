@@ -18,17 +18,17 @@ class AersysPrinter implements Printable {
 
     @Override
     public int print(Graphics _g, PageFormat page, int pg) {
-        if (pg > 0) {
-            return NO_SUCH_PAGE;
-        }
+//        if (pg > 0) {
+//            return NO_SUCH_PAGE;
+//        }
 
         Graphics2D g = (Graphics2D)_g;
         for (int i = 0; i < 4; i++) {
             BufferedImage barcode;
             try {
-                 barcode = ImageIO.read(new File((116 + i) + ".png"));
+                 barcode = ImageIO.read(new File((120 + pg * 4 + i) + ".png"));
             } catch (Exception e) { e.printStackTrace(); continue; }
-            g.drawImage(barcode, (int)(page.getImageableWidth() - barcode.getWidth()) / 2, (int)(((1.5 * 72 - barcode.getHeight()) / 2) + (i * 1.5) * 72), null);
+            g.drawImage(barcode, (int)(page.getImageableWidth() - barcode.getWidth()) / 2, (int)(((1.5 * 72 - barcode.getHeight()) / 2) + (i * 1.45) * 72), null);
         }
         return PAGE_EXISTS;
     }
@@ -44,8 +44,11 @@ public class Main {
         pageFormat.setPaper(labelPaper);
         pageFormat = pj.validatePage(pageFormat);
         Book pBook = new Book();
-        pBook.append(new AersysPrinter(), pageFormat);
-        pBook.append(new AersysPrinter(), pageFormat);
+        AersysPrinter aersysPrinter = new AersysPrinter();
+        for (int i = 0; i < 6; i++) {
+            pBook.append(aersysPrinter, pageFormat);
+        }
+        System.out.println(pBook.getNumberOfPages());
         pj.setPageable(pBook);
         pj.printDialog();
         try {
